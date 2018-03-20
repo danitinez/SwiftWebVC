@@ -129,8 +129,9 @@ public class SwiftWebVC: UIViewController {
         navBarTitle = UILabel()
         navBarTitle.backgroundColor = UIColor.clear
         if presentingViewController == nil {
-            if let titleAttributes = navigationController!.navigationBar.titleTextAttributes {
-                navBarTitle.textColor = titleAttributes[.foregroundColor] as? UIColor
+            if let titleAttributes = navigationController!.navigationBar.titleTextAttributes,
+               let foregroundColor = titleAttributes[NSForegroundColorAttributeName] as? UIColor {
+                navBarTitle.textColor = foregroundColor
             }
         }
         else {
