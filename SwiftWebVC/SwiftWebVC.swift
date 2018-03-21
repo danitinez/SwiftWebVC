@@ -8,9 +8,10 @@
 
 import WebKit
 
-public protocol SwiftWebVCDelegate: class {
+@objc public protocol SwiftWebVCDelegate: class {
     func didStartLoading()
     func didFinishLoading(success: Bool)
+    @objc optional func viewControllerForToolbar() -> UIViewController
 }
 
 public class SwiftWebVC: UIViewController {
@@ -131,7 +132,7 @@ public class SwiftWebVC: UIViewController {
         if presentingViewController == nil {
             if let titleAttributes = navigationController!.navigationBar.titleTextAttributes,
                let foregroundColor = titleAttributes[NSForegroundColorAttributeName] as? UIColor {
-                navBarTitle.textColor = foregroundColor
+//                navBarTitle.textColor = foregroundColor
             }
         }
         else {
@@ -199,7 +200,7 @@ public class SwiftWebVC: UIViewController {
             
         }
         else {
-            let items: NSArray = sharingEnabled ? [fixedSpace, backBarButtonItem, flexibleSpace, forwardBarButtonItem, flexibleSpace, refreshStopBarButtonItem, flexibleSpace, actionBarButtonItem, fixedSpace] : [fixedSpace, backBarButtonItem, flexibleSpace, forwardBarButtonItem, flexibleSpace, refreshStopBarButtonItem, fixedSpace]
+            let items: [UIBarButtonItem] = sharingEnabled ? [fixedSpace, backBarButtonItem, flexibleSpace, forwardBarButtonItem, flexibleSpace, refreshStopBarButtonItem, flexibleSpace, actionBarButtonItem, fixedSpace] : [fixedSpace, backBarButtonItem, flexibleSpace, forwardBarButtonItem, flexibleSpace, refreshStopBarButtonItem, fixedSpace]
             
             if let navigationController = navigationController, !closing {
                 if presentingViewController == nil {
@@ -209,12 +210,18 @@ public class SwiftWebVC: UIViewController {
                     navigationController.toolbar.barStyle = navigationController.navigationBar.barStyle
                 }
                 navigationController.toolbar.tintColor = navigationController.navigationBar.tintColor
-                toolbarItems = items as? [UIBarButtonItem]
+                if let viewControllerForToolbar = delegate?.viewControllerForToolbar {
+                  viewControllerForToolbar().setToolbarItems(items, animated: false)
+                }
+                else {
+                  self.setToolbarItems(items, animated: false)
+                }
+
             }
         }
     }
-    
-    
+  
+  
     ////////////////////////////////////////////////
     // Target Actions
     

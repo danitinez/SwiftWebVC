@@ -20,11 +20,17 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
+    var vc: UIViewController!
     // MARK: Push
     @IBAction func push() {
-        let webVC = SwiftWebVC(urlString: "https://www.google.com")
-        webVC.delegate = self
-        self.navigationController?.pushViewController(webVC, animated: true)
+      let webVC = SwiftWebVC(urlString: "https://www.google.com")
+      self.vc = UIViewController()
+      vc.addChildViewController(webVC)
+      vc.view.addSubview(webVC.view)
+      webVC.view.frame = vc.view.frame
+      webVC.delegate = self
+      self.navigationController?.pushViewController(vc, animated: true)
+//      navigationController?.setToolbarHidden(false, animated: false)
     }
     
     // MARK: Modal
@@ -54,4 +60,12 @@ extension ViewController: SwiftWebVCDelegate {
     func didFinishLoading(success: Bool) {
         print("Finished loading. Success: \(success).")
     }
+  
+  func viewControllerForToolbar() -> UIViewController {
+    return self.vc
+  }
+  
+//  func setToolbarItemsIn(toolbarItems: [UIBarItem]) {
+//
+//  }
 }
