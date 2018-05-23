@@ -325,14 +325,31 @@ extension SwiftWebVC: WKNavigationDelegate {
         let url = navigationAction.request.url
         
         let hostAddress = navigationAction.request.url?.host
-        
-        if (navigationAction.targetFrame == nil) {
-            if UIApplication.shared.canOpenURL(url!) {
-                UIApplication.shared.openURL(url!)
+      
+        if hostAddress == "maps.google.com" {
+          if let q = url?.query {
+            let gmapsUrl = URL(string: "comgooglemaps://?\(q)")!
+            if !UIApplication.shared.openURL(gmapsUrl) {
+              let appleMapsUrl = URL(string: "http://maps.apple.com/?\(q)")!
+              if UIApplication.shared.openURL(appleMapsUrl) {
+                decisionHandler(.cancel)
+                return
+              }
             }
+            else {
+              decisionHandler(.cancel)
+              return
+            }
+          }
         }
-        
-        // To connnect app store
+      
+        if (navigationAction.targetFrame == nil) {
+          if UIApplication.shared.canOpenURL(url!) {
+            UIApplication.shared.openURL(url!)
+          }
+        }
+      
+        // To connect app store
         if hostAddress == "itunes.apple.com" {
             if UIApplication.shared.canOpenURL(navigationAction.request.url!) {
                 UIApplication.shared.openURL(navigationAction.request.url!)
@@ -375,3 +392,11 @@ extension SwiftWebVC: WKNavigationDelegate {
         }
     }
 }
+
+extension URL {
+  subscript(queryParam:String) -> String? {
+    guard let url = URLComponents(string: self.absoluteString) else { return nil }
+    return url.queryItems?.first(where: { $0.name == queryParam })?.value
+  }
+}
+

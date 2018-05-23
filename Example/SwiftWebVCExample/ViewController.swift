@@ -23,7 +23,7 @@ class ViewController: UIViewController {
     var vc: UIViewController!
     // MARK: Push
     @IBAction func push() {
-      let webVC = SwiftWebVC(urlString: "https://www.google.com")
+      let webVC = SwiftWebVC(urlString: "https://www.rchsd.org/mobile-locations/")
       self.vc = UIViewController()
       vc.addChildViewController(webVC)
       vc.view.addSubview(webVC.view)
